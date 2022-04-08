@@ -1,0 +1,183 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "authentication",
+    "version": "0.0.1"
+  },
+  "tags": [
+    {
+      "name": "AuthenticationService"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/userSession": {
+      "post": {
+        "operationId": "AuthenticationService_CreateUserSession",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateUserSessionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "credentials",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UserCredentials"
+            }
+          }
+        ],
+        "tags": [
+          "AuthenticationService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1AuthenticationProvider": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "The provider id"
+        },
+        "name": {
+          "type": "string",
+          "title": "The provider name"
+        },
+        "type": {
+          "$ref": "#/definitions/v1AuthenticationType",
+          "title": "The provider type"
+        }
+      },
+      "title": "AuthenticationProvider show who provide the authenticaion"
+    },
+    "v1AuthenticationType": {
+      "type": "string",
+      "enum": [
+        "AUTHENTICATION_TYPE_UNSPECIFIED",
+        "AUTHENTICATION_TYPE_OAUTH",
+        "AUTHENTICATION_TYPE_LOCAL"
+      ],
+      "default": "AUTHENTICATION_TYPE_UNSPECIFIED",
+      "title": "AuthenticationType"
+    },
+    "v1CreateUserSessionResponse": {
+      "type": "object",
+      "properties": {
+        "userSession": {
+          "$ref": "#/definitions/v1UserSession",
+          "title": "The user session information"
+        },
+        "jwt": {
+          "type": "string",
+          "title": "The initial JSON Web Token for the new session, which contains \"claims\""
+        },
+        "refreshToken": {
+          "type": "string",
+          "title": "The refresh token"
+        },
+        "newPasswordRequired": {
+          "type": "boolean",
+          "title": "User need to change password"
+        }
+      }
+    },
+    "v1UserCredentials": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "title": "UserCredentials is a message containing a `username` and `password` that is used for authentication"
+    },
+    "v1UserSession": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "The usersession's unique UUID",
+          "readOnly": true
+        },
+        "username": {
+          "type": "string",
+          "title": "The user name used for login",
+          "readOnly": true
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time",
+          "title": "The time at which the session started",
+          "readOnly": true
+        },
+        "tokenTime": {
+          "type": "string",
+          "format": "date-time",
+          "title": "The time at which the jwt was created or last refreshed",
+          "readOnly": true
+        },
+        "location": {
+          "type": "string",
+          "title": "Location of the user logged in - server name or ip",
+          "readOnly": true
+        },
+        "provider": {
+          "$ref": "#/definitions/v1AuthenticationProvider",
+          "title": "The provider type",
+          "readOnly": true
+        }
+      },
+      "title": "UserSession is the information of user session"
+    }
+  }
+}
